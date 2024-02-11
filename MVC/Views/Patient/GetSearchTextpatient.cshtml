@@ -1,20 +1,14 @@
 ﻿@model IEnumerable<MVC.Models.Patient>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "GetSearchTextpatient";
 }
 
-<h1>Index</h1>
+<h1>Searched patient</h1>
 
-<p>
-    <a href="@Url.Action("AddOrEditPatient","Patient")" class="btn btn-primary">Create New</a>
-    <span style="float:right">
-        <form action="/Patient/GetSearchTextPatient" method="get">
-    <input type="text" name="search" />
-    <button type="submit">Search</button>
-      </form>
-</span>
-</p>
+@*<p>
+    <a asp-action="Create">Create New</a>
+</p>*@
 <table class="table">
     <thead>
         <tr>
@@ -36,8 +30,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.Address)
             </th>
-            <th>Actions</th>
-            <th>Management</th>
+            @*<th></th>*@
         </tr>
     </thead>
     <tbody>
@@ -61,16 +54,11 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Address)
             </td>
-                <td>
-                    @Html.ActionLink("+ Visit", "AddPatientVisit", new { Id=item.PatientId  }) |
-                    @Html.ActionLink("+ Disease", "AddPatientDisease", new { Id=item.PatientId }) |
-                    @Html.ActionLink("+ Doctor", "AddPatientDoctor", new { Id=item.PatientId })
-                </td>
-            <td>
-                    @Html.ActionLink("Edit", "AddOrEditPatient", new { Id=item.PatientId }) |
-                   @* @Html.ActionLink("Details", "Details", new { Id=item.PatientId }) |*@
-                    @Html.ActionLink("Delete", "DeletePatient", new { Id=item.PatientId })
-            </td>
+           @* <td>
+                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+            </td>*@
         </tr>
 }
     </tbody>

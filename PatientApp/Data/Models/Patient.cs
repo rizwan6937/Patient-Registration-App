@@ -10,10 +10,10 @@
         public string Address { get; set; }
 
         // Navigation property for visits
-        public List<Visit> Visits { get; set; }
+        public ICollection<Visit?> Visits { get; set; } = null;
 
-        public List<Disease> Diseases { get; set; }
+        public ICollection<Disease?> Diseases { get; set; } = null;
 
-        public List<Doctor> Doctors { get; set; }
+        public ICollection<Doctor?> Doctors { get; set; } = null;
     }
 }

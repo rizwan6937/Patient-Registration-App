@@ -9,7 +9,8 @@ namespace MVC.Controllers
 {
     public class PatientController : Controller
     {
-       
+        public string baseUrl = "http://localhost:5104/api/patient/";
+        [HttpGet]
         public async Task<ActionResult> Index()
         {
             IEnumerable<Patient> patientList;
@@ -21,51 +22,97 @@ namespace MVC.Controllers
             }
             else
             {
-                    return View("Home/Error");
+                return View("Home/Error");
             }
             return View(patientList);
         }
-
+        [HttpGet]
         public async Task<ActionResult> AddOrEditPatient(int Id = 0)
         {
-            if (Id==0)
+            if (Id == 0)
             {
                 return View(new Patient());
             }
             else
             {
-                HttpResponseMessage response = await GlobalModel.client.GetAsync("Patient/"+Id.ToString()); 
+                HttpResponseMessage response = await GlobalModel.client.GetAsync("Patient/" + Id.ToString());
                 var responseBody = await response.Content.ReadAsStringAsync();
                 var model = JsonConvert.DeserializeObject<Patient>(responseBody);
                 return View(model);
             }
-            
+
         }
+
         [HttpPost]
-        public async Task<ActionResult> AddOrEditPatient(Patient model)
+        public IActionResult AddOrEditPatient(Patient model)
         {
-            //var json = JsonConvert.SerializeObject(model);
-            //var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            if (model.PatientId == 0)
+            using (var client = new HttpClient())
             {
+                string data = JsonConvert.SerializeObject(model);
+                StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
 
-                HttpResponseMessage response = await GlobalModel.client.PostAsJsonAsync("Patient", model);
-                if (response.IsSuccessStatusCode)
+                if (model.PatientId == 0)
                 {
-                    return RedirectToAction("Index");
+
+                    HttpResponseMessage response = client.PostAsync(baseUrl, content).Result;
+                    if (response.IsSuccessStatusCode)
+                    {
+                        return RedirectToAction("Index");
+                    }
+                }
+                else
+                {
+                    HttpResponseMessage response = client.PutAsync(baseUrl + model.PatientId, content).Result;
+                    if (response.IsSuccessStatusCode)
+                    {
+                        return RedirectToAction("Index");
+                    }
                 }
             }
-            else
-            {
-                HttpResponseMessage response = await GlobalModel.client.PutAsJsonAsync("Patient/" + model.PatientId, model);
-                if (response.IsSuccessStatusCode)
-                {
-                    return RedirectToAction("Index");
-                }
-            }
+
             return RedirectToAction("AddOrEditPatient");
 
+        }
+
+        [HttpGet]
+        public IActionResult DeletePatient(int Id)
+        {
+            var model = new Patient();
+            HttpResponseMessage response = GlobalModel.client.GetAsync("Patient/" + Id.ToString()).Result;
+            if (response.IsSuccessStatusCode)
+            {
+                var responseBody = response.Content.ReadAsStringAsync().Result;
+                model = JsonConvert.DeserializeObject<Patient>(responseBody);
+            }
+            return View(model);
+        }
+
+        [HttpPost, ActionName("DeletePatient")]
+        public IActionResult DeletePatientConfirmed(int Id)
+        {
+            
+            HttpResponseMessage response = GlobalModel.client.DeleteAsync("Patient/" + Id.ToString()).Result;
+            if (response.IsSuccessStatusCode)
+            {
+                return RedirectToAction("Index");
+            }
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetSearchTextPatient(string search)
+        {
+            string url = $"http://localhost:5104/api/patient/search?search={search}";
+            IEnumerable<Patient> patientList;
+            HttpResponseMessage response = GlobalModel.client.GetAsync(url).Result;
+            if (response.IsSuccessStatusCode)
+            {
+                string responseBody = await response.Content.ReadAsStringAsync();
+                patientList = JsonConvert.DeserializeObject<IEnumerable<Patient>>(responseBody);
+                return View(patientList);
+            }
+            return RedirectToAction("Index");
         }
 
         public IActionResult AddPatientVisit(int Id)
@@ -88,7 +135,7 @@ namespace MVC.Controllers
             Disease disease = new Disease()
             {
                 DiseaseName = "ABC",
-                PatientId= Id
+                PatientId = Id
             };
             // Save this object (disease) in database
             return RedirectToAction("Index");

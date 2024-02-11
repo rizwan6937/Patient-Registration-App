@@ -25,7 +25,7 @@ namespace MVC.Models
         public static void InitializeHttpClient()
         {
             client = new HttpClient();
-            client.BaseAddress = new Uri("http://localhost:5104/api/");
+            client.BaseAddress = new Uri("http://localhost:5104/api/patient");
             client.DefaultRequestHeaders.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }

@@ -23,6 +23,21 @@ namespace PatientApp.Data.Repos.Repositories
             return await _context.Patients.FindAsync(Id);
         }
 
+        public async Task<IEnumerable<Patient>> GetPatientBySearchTextAsync(string search)
+        {
+            var query = _context.Patients.AsEnumerable();
+            
+
+            // Apply filtering based on search criteria
+            if (!string.IsNullOrEmpty(search))
+            {
+                query = query.Where(m => m.Name.ToLower().Contains(search.ToLower()));
+                //query = query.Where(m => m.Gender.Contains(search));
+            }
+
+            return query.ToList();
+        }
+
         public async Task PostPatientAsync(Patient patient)
         {
             _context.Patients.Add(patient);
@@ -32,6 +47,7 @@ namespace PatientApp.Data.Repos.Repositories
         public async Task PutPatientAsync(Patient patient)
         {
             _context.Entry(patient).State = EntityState.Modified;
+            //_context.Patients.Add(patient);
             await _context.SaveChangesAsync();
         }
 

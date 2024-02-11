@@ -3,6 +3,12 @@ namespace MVC.Models
 {
     public class Patient
     {
+        public Patient()
+        {
+            Visits = new List<Visit>();
+            Diseases = new List<Disease>();
+            Doctors = new List<Doctor>();
+        }
         public int PatientId { get; set; }
        
         public string Name { get; set; }
@@ -15,10 +21,10 @@ namespace MVC.Models
         public string Address { get; set; }
 
         // Navigation property for visits
-        public List<Visit> Visits { get; set; }
+        public ICollection<Visit> Visits { get; set; } 
 
-        public List<Disease> Diseases { get; set; }
+        public ICollection<Disease> Diseases { get; set; }
 
-        public List<Doctor> Doctors { get; set; }
+        public ICollection<Doctor> Doctors { get; set; }
     }
 }

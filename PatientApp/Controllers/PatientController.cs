@@ -34,12 +34,23 @@ public class PatientController : ControllerBase
         return Ok(patient);
     }
 
+    [HttpGet("search")]
+    public async Task<IActionResult> GetPatientBySearchText(string search)
+    {
+        var patient = await _patientRepository.GetPatientBySearchTextAsync(search);
+
+        if (patient == null)
+            return NotFound();
+
+        return Ok(patient);
+    }
+
     [HttpPost]
-    public async Task<IActionResult> PostPatient(Patient patient)
+    public async Task<ActionResult<Patient>> PostPatient(Patient patient)
     {
         await _patientRepository.PostPatientAsync(patient);
-        //return Ok();
-        return CreatedAtAction(nameof(GetPatientById), new { Id = patient.PatientId }, patient);
+        return Ok(patient);
+        //return CreatedAtAction(nameof(GetPatientById), new { Id = patient.PatientId }, patient);
     }
 
     [HttpPut("{Id}")]
@@ -51,8 +62,14 @@ public class PatientController : ControllerBase
             return NotFound();
 
         // Update properties of the patient
+        patient.Name = updatedPatient.Name;
+        patient.Age = updatedPatient.Age;
+        patient.Gender = updatedPatient.Gender;
+        patient.PhoneNumber = updatedPatient.PhoneNumber;
+        patient.Address = updatedPatient.Address;
 
-        await _patientRepository.PutPatientAsync(updatedPatient);
+
+    await _patientRepository.PutPatientAsync(patient);
         return Ok();
     }
 

@@ -7,6 +7,6 @@
 
         // Foreign key to connect with Patient
         public int PatientId { get; set; }
-        public Patient Patient { get; set; }
+        //public Patient Patient { get; set; }
     }
 }
